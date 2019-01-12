@@ -294,11 +294,15 @@ ELSE()
 	MESSAGE(FATAL_ERROR "Asked for unknown SHA1 backend ${SHA1_BACKEND}")
 ENDIF()
 
-# Include POSIX regex when it is required
-IF(WIN32 OR AMIGA OR CMAKE_SYSTEM_NAME MATCHES "(Solaris|SunOS)")
-	ADD_SUBDIRECTORY("${libgit2_SOURCE_DIR}/deps/regex" "${libgit2_BINARY_DIR}/deps/regex")
-	LIST(APPEND LIBGIT2_SYSTEM_INCLUDES "${libgit2_SOURCE_DIR}/deps/regex")
-	LIST(APPEND LIBGIT2_OBJECTS $<TARGET_OBJECTS:regex>)
+# Include PCRE and its POSIX regex compatibility layer when it is required
+IF (HAVE_REGCOMP_L)
+	ADD_FEATURE_INFO(regex ON "using system regcomp_l")
+ELSE()
+	LIST(APPEND LIBGIT2_SYSTEM_INCLUDES "${libgit2_SOURCE_DIR}/deps/pcre")
+	ADD_SUBDIRECTORY("${libgit2_SOURCE_DIR}/deps/pcre" "${libgit2_BINARY_DIR}/deps/pcre")
+	LIST(APPEND LIBGIT2_SYSTEM_INCLUDES "${libgit2_SOURCE_DIR}/deps/pcre")
+	LIST(APPEND LIBGIT2_OBJECTS $<TARGET_OBJECTS:pcre>)
+	ADD_FEATURE_INFO(regex ON "using bundled PCRE")
 ENDIF()
 
 # Optional external dependency: http-parser
