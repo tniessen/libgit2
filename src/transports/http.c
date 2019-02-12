@@ -698,15 +698,7 @@ static int load_proxy_config(http_subtransport *t)
 		return -1;
 	}
 
-	if ((error = gitno_connection_data_from_url(&t->proxy.url, t->proxy_opts.url, NULL)) < 0)
-		return error;
-
-	if (t->proxy.url.use_ssl) {
-		git_error_set(GIT_ERROR_NET, "SSL connections to proxy are not supported");
-		return -1;
-	}
-
-	return error;
+	return gitno_connection_data_from_url(&t->proxy.url, t->proxy_opts.url, NULL);
 }
 
 static int check_certificate(
