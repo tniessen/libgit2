@@ -877,3 +877,11 @@ void test_repo_init__at_filesystem_root(void)
 	git_buf_dispose(&root);
 	git_repository_free(repo);
 }
+
+void test_repo_init__nonexistent_paths(void)
+{
+	git_repository *repo;
+
+	cl_git_fail(git_repository_init(&repo, "Q:/non/existent/path", 0));
+	cl_git_fail(git_repository_init(&repo, "Q:\\non\\existent\\path", 0));
+}
